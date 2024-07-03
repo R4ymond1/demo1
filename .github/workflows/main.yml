@@ -17,7 +17,7 @@ jobs:
         env:
           SSH_PRIVATE_KEY: ${{ secrets.AWS_PRIVATE_KEY }}
           SSH_USERNAME: ec2-user
-          AWS_INSTANCE_IP: 52.80.40.170
+          AWS_INSTANCE_IP: ec2-52-80-40-170.cn-north-1.compute.amazonaws.com.cn
         uses: webfactory/ssh-agent@v0.5.3
         with:
           ssh-private-key: ${{ secrets.AWS_PRIVATE_KEY }}
