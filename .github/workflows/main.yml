@@ -36,4 +36,4 @@ jobs:
 
       - name: Start jar on EC2
         run: |
-          ssh -i $SSH_PRIVATE_KEY $SSH_USERNAME@$AWS_INSTANCE_IP "java -jar ../../target/demo1-0.0.1-SNAPSHOT.jar &"
+          ssh -i $SSH_PRIVATE_KEY $SSH_USERNAME@$AWS_INSTANCE_IP "nohup java -jar /vdb/soft/api/demo1-0.0.1-SNAPSHOT.jar &"
