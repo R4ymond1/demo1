@@ -32,7 +32,7 @@ jobs:
 
       - name: Upload jar to EC2
         run: |
-          scp -i ${{ env.SSH_PRIVATE_KEY}} /home/runner/work/demo1/demo1/target/demo1-0.0.1-SNAPSHOT.jar ${{env.SSH_USERNAME}}@${{env.AWS_INSTANCE_IP}}:/vdb/soft/api
+          scp -i ${{ env.SSH_PRIVATE_KEY}} /home/runner/work/demo1/demo1/target/demo1-0.0.1-SNAPSHOT.jar ec2-user@ec2-52-80-40-170.cn-north-1.compute.amazonaws.com.cn:/vdb/soft/api
 
       - name: Start jar on EC2
         run: |
