@@ -32,8 +32,8 @@ jobs:
 
       - name: Upload jar to EC2
         run: |
-          scp -i ${{ secrets.AWS_PRIVATE_KEY }} .target/demo1-0.0.1-SNAPSHOT.jar $SSH_USERNAME@$AWS_INSTANCE_IP:/vdb/soft/api/test
+          scp -i $SSH_PRIVATE_KEY .target/demo1-0.0.1-SNAPSHOT.jar $SSH_USERNAME@$AWS_INSTANCE_IP:/vdb/soft/api/test
 
       - name: Start jar on EC2
         run: |
-          ssh -i ${{ secrets.AWS_PRIVATE_KEY }} $SSH_USERNAME@$AWS_INSTANCE_IP "java -jar .target/demo1-0.0.1-SNAPSHOT.jar &"
+          ssh -i $SSH_PRIVATE_KEY $SSH_USERNAME@$AWS_INSTANCE_IP "java -jar .target/demo1-0.0.1-SNAPSHOT.jar &"
