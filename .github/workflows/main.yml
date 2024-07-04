@@ -13,14 +13,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: User PEM key
+        run: echo "${{ secrets.AWS_PRIVATE_KEY }}" | base64 -d > raymond.pem
+
       - name: Setup SSH
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.AWS_PRIVATE_KEY }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_USERNAME: ec2-user
           AWS_INSTANCE_IP: ec2-52-80-40-170.cn-north-1.compute.amazonaws.com.cn
         uses: webfactory/ssh-agent@v0.5.3
         with:
-          ssh-private-key: ${{ secrets.AWS_PRIVATE_KEY }}
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
       - name: Set up JDK
         uses: actions/setup-java@v2
         with:
@@ -30,10 +33,12 @@ jobs:
       - name: Build with Maven
         run: mvn -B clean package
 
+
+
       - name: Upload jar to EC2
         run: |
-          scp -i $SSH_PRIVATE_KEY ./target/demo1-0.0.1-SNAPSHOT.jar $SSH_USERNAME@$AWS_INSTANCE_IP:/vdb/soft/api/test
+          scp -i raymond.pem -o StrictHostKeyChecking=no /home/runner/work/demo1/demo1/target/demo1-0.0.1-SNAPSHOT.jar ec2-user@ec2-52-80-40-170.cn-north-1.compute.amazonaws.com.cn:/vdb/soft/api
 
       - name: Start jar on EC2
         run: |
-          ssh -i $SSH_PRIVATE_KEY $SSH_USERNAME@$AWS_INSTANCE_IP "java -jar .target/demo1-0.0.1-SNAPSHOT.jar &"
+          ssh -i raymond.pem -o StrictHostKeyChecking=no ec2-user@ec2-52-80-40-170.cn-north-1.compute.amazonaws.com.cn "nohup java -jar /vdb/soft/api/demo1-0.0.1-SNAPSHOT.jar &"
