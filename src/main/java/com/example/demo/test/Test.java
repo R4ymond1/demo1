@@ -15,6 +15,6 @@ public class Test {
 //        stringRedisTemplate.opsForValue().set("k1", "v1");
 //        String k1 = stringRedisTemplate.opsForValue().get("k1");
 //        System.err.println("【k1】= " + k1);
-        return "Hello,From Github!";
+        return "Hello,From Github Action!";
     }
 }

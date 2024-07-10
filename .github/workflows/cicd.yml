@@ -1,0 +1,75 @@
+name: Pothole Warning CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+env:
+  STAGE: test
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.9.0
+          terraform_wrapper: false
+
+      - name: Setup Packer
+        uses: hashicorp/setup-packer@v1
+
+#      - name: Configure AWS credentials
+#        uses: aws-actions/configure-aws-credentials@v1
+#        with:
+#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          aws-region: cn-north
+
+      - name: Start building source code
+        run: |
+          cd ../ || exit 1
+          mvn clean install -P ${{ env.STAGE }} -DskipFormat=true || exit 1
+          cd ../../cicd || exit 1
+
+      - name: Run environment bootstrap
+        run: |
+          cd ../infrastructure/terraform/environment/${{ env.STAGE }}/bootstrap || exit 1
+          terraform init || exit 1
+          terraform apply -auto-approve || exit 1
+          demo1_repo_url=$(terraform output demo1_repo_url)
+          demo1_repo_url=${demo1_repo_url//\"/}
+          application_bucket=$(terraform output application_bucket)
+          application_bucket=${application_bucket//\"/}
+          cd ../../../../../cicd || exit 1
+
+      - name: Build and release docker images
+        run: |
+          cd ../infrastructure/packer || exit 1
+          packer build -var "stage=${{ env.STAGE }}" -var "ecr_repo=$demo1_repo_url" -var "image_tag=latest" packer_demo1_config.json || exit 1
+          cd ../../cicd
+
+      - name: Upload jar files
+        run: |
+          cd ../infrastructure/packer || exit 1
+          aws s3 cp ./package/${{ env.STAGE }}/api.jar "s3://${application_bucket}" --profile pw-${{ env.STAGE }} || exit 1
+          cd ../../cicd || exit 1
+
+      - name: Environment deployment
+        run: |
+          cd ../infrastructure/terraform/environment/${{ env.STAGE }}/deployment || exit 1
+          terraform init || exit 1
+          terraform apply -auto-approve || exit 1
+          cd ../../../../../cicd || exit 1

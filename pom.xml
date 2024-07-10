@@ -67,7 +67,38 @@
                     </excludes>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>${maven-antrun-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>install</id>
+                        <phase>install</phase>
+                        <configuration>
+                            <target>
+                                <copy file="${basedir}/target/${project.artifactId}-${project.version}.jar"
+                                      tofile="${basedir}/infrastructure/packer/package/${spring.active.profile}/${project.artifactId}.jar"
+                                      overwrite="true"/>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>test</id>
+            <properties>
+                <spring.active.profile>test</spring.active.profile>
+            </properties>
+        </profile>
+    </profiles>
 
 </project>

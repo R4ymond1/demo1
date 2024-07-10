@@ -1,0 +1,40 @@
+{
+  "variables": {
+    "stage": null,
+    "ecr_repo": null,
+    "image_tag": null
+  },
+  "builders": [
+    {
+      "type": "docker",
+      "image": "openjdk:17",
+      "commit": true,
+      "platform": "linux/amd64",
+      "changes": [
+        "ENTRYPOINT java -jar /root/demo1.jar"
+      ]
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "file",
+      "source": "./package/{{user `stage`}}/demo1.jar",
+      "destination": "/root/demo1.jar"
+    }
+  ],
+  "post-processors": [
+    [
+      {
+        "type": "docker-tag",
+        "repository": "{{user `ecr_repo`}}",
+        "tags": "{{user `image_tag`}}"
+      },
+      {
+        "type": "docker-push",
+        "ecr_login": true,
+        "aws_profile": "pw-{{user `stage`}}",
+        "login_server": "https://{{user `ecr_repo`}}:{{user `image_tag`}}"
+      }
+    ]
+  ]
+}
