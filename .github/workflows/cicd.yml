@@ -45,7 +45,7 @@ jobs:
 
       - name: Run environment bootstrap
         run: |
-          cd ../infrastructure/terraform/environment/${{ env.STAGE }}/bootstrap || exit 1
+          cd infrastructure/terraform/environment/${{ env.STAGE }}/bootstrap || exit 1
           terraform init || exit 1
           terraform apply -auto-approve || exit 1
           demo1_repo_url=$(terraform output demo1_repo_url)
