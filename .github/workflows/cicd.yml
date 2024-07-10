@@ -35,6 +35,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: '17'
+          distribution: 'adopt'
           maven-version: '3.8.2'
 
       #      - name: Configure AWS credentials
