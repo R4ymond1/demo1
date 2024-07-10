@@ -41,7 +41,7 @@ jobs:
       - name: Start building source code
         run: |
           cd ../ || exit 1
-          mvn clean install -f /pom.xml -P ${{ env.STAGE }} -DskipFormat=true || exit 1
+          mvn clean install -f pom.xml -P ${{ env.STAGE }} -DskipFormat=true || exit 1
 
       - name: Run environment bootstrap
         run: |
