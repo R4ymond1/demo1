@@ -7,7 +7,7 @@ on:
   pull_request:
 
 env:
-  STAGE: test
+  STAGE: 'test'
 
 jobs:
   deploy:
