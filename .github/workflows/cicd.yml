@@ -38,10 +38,10 @@ jobs:
 #          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 #          aws-region: cn-north
 
-      - name: Start building source code
-        run: |
-          cd ../ || exit 1
-          mvn clean install -f /home/runner/work/demo1/pom.xml -P ${{ env.STAGE }} -DskipFormat=true || exit 1
+      # - name: Start building source code
+      #   run: |
+      #     cd ../ || exit 1
+      #     mvn clean install -f /home/runner/work/demo1/pom.xml -P ${{ env.STAGE }} -DskipFormat=true || exit 1
 
       - name: Run environment bootstrap
         run: |
